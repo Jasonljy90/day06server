@@ -22,8 +22,6 @@ public class ListClient{
 
         IOUtils.write(socket, "%d %d".formatted(nums, range));
         String response = IOUtils.read(socket);
-        // System.out.println(response);
-        // Process response - calculate the average
         String[] numbers  = response.split(":");
         Integer totalSum = 0;
 
