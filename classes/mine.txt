@@ -1,0 +1,92 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.SecureRandom;
+import java.util.Random;
+import java.util.Scanner;
+
+public class day06 {
+    public static void main(String[] args) throws Exception {
+        
+        
+    }
+
+    public static void StartServer(int port, String fileName){
+        try{
+            ServerSocket server = new ServerSocket(port);
+            Socket socket = server.accept();
+
+            // Input stream
+            DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+
+            // Output stream
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
+            while(true){
+                String fromClient = dis.readUTF();
+                if(fromClient.equalsIgnoreCase("exit")){
+                    // Exit loop
+                    break;
+                }
+                System.out.println("LOG: msg from client: " + fromClient);
+                if(fromClient.equalsIgnoreCase("get-cookie")){
+                    // Send a random cookie from file
+                    Random rand = new SecureRandom();
+                    dos.writeUTF(String.valueOf(rand.nextInt()));
+                    // Implement this class
+                    // doc.WriteUTF(new CookieFile().getRandomCookie()}
+                    dos.flush();
+                }else{
+                    // Send a msg, "Invalid command from server"
+                    dos.writeUTF("Invalid command from server");
+                    dos.flush();
+                }
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void StartClient(String host, int port){
+        try{
+            Socket socket = new Socket(host,port);
+
+             // Input stream
+             DataInputStream dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+
+             // Output stream
+             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
+             Scanner sc = new Scanner(System.in);
+             boolean stop = false;
+
+             while(!stop){
+                String line = sc.nextLine();
+                if(line.equalsIgnoreCase("exit")){
+                    stop= true;
+                    break;
+                }
+                if(line.equalsIgnoreCase("get-cookie")){
+                    // Send a request to server for the cookie
+                    dos.writeUTF("get-cookie");
+                    dos.flush();
+                }else{
+                    System.out.println("Invalid Command: " + line);
+                }
+
+                String fromServer = dis.readUTF();
+                System.out.println("Resp from server ! " + fromServer);
+             }
+             
+        }catch(UnknownHostException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+}

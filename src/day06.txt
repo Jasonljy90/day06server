@@ -1,0 +1,30 @@
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class day06 {
+    public static void main(String[] args) throws Exception {
+        
+        List<Integer> numList = new LinkedList<>();
+
+        ExecutorService threadpool = Executors.newFixedThreadPool(2);
+
+        for (Integer i = 0; i < 3; i++) {
+            // Create a thread
+            RandomNumbers thr = new RandomNumbers("thr -%d".formatted(i), 100, numList);
+            //thr.run(); this is just a method call
+            // Schedule a thread to the runnable
+            threadpool.submit(thr);
+        }
+        
+        System.out.println("All done");
+
+        while(true) {
+            System.out.println("\n>>>> numList: " + numList + ", size: " + numList.size());
+            
+            // Sleep for 15 seconds
+            Thread.sleep(2 * 1000);
+        }
+    }
+}
